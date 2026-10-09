@@ -4,10 +4,11 @@ require_once __DIR__ . '/../config/database.php';
 class Solicitacao
 {
     public static function all() {
-        $sql = "SELECT s.*, a.codigo, a.especie, b.nome AS bairro_nome
+        $sql = "SELECT s.*, a.codigo, a.especie, b.nome AS bairro_nome, u.nome AS usuario_nome, u.email AS usuario_email
                 FROM solicitacoes s
                 INNER JOIN arvores a ON a.id = s.arvore_id
                 INNER JOIN bairros b ON b.id = a.bairro_id
+                INNER JOIN usuarios u ON u.id = s.usuario_id
                 ORDER BY
                     CASE s.status
                         WHEN 'Aberta' THEN 1
@@ -29,8 +30,8 @@ class Solicitacao
     }
 
     public static function create($data) {
-        $sql = 'INSERT INTO solicitacoes (arvore_id, solicitante, telefone, tipo, prioridade, status, descricao)
-                VALUES (:arvore_id, :solicitante, :telefone, :tipo, :prioridade, :status, :descricao)';
+        $sql = 'INSERT INTO solicitacoes (arvore_id, usuario_id, solicitante, telefone, tipo, prioridade, status, descricao)
+                VALUES (:arvore_id, :usuario_id, :solicitante, :telefone, :tipo, :prioridade, :status, :descricao)';
         Database::getConnection()->prepare($sql)->execute($data);
     }
 
