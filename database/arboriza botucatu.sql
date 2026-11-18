@@ -1,8 +1,6 @@
 CREATE DATABASE IF NOT EXISTS arboriza_botucatu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE arboriza_botucatu;
 
-DROP TABLE IF EXISTS fotos_arvores;
-DROP TABLE IF EXISTS intervencoes;
 DROP TABLE IF EXISTS solicitacoes;
 DROP TABLE IF EXISTS arvores;
 DROP TABLE IF EXISTS bairros;
@@ -13,7 +11,7 @@ CREATE TABLE usuarios (
     nome VARCHAR(120) NOT NULL,
     email VARCHAR(160) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    perfil ENUM('Administrador','Técnico','Leitor') DEFAULT 'Administrador',
+    perfil ENUM('Administrador','Técnico','Leitor') DEFAULT 'Leitor',
     ativo TINYINT(1) DEFAULT 1,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -43,16 +41,6 @@ CREATE TABLE arvores (
     FOREIGN KEY (bairro_id) REFERENCES bairros(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-CREATE TABLE fotos_arvores (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    arvore_id INT NOT NULL,
-    caminho VARCHAR(255) NOT NULL,
-    legenda VARCHAR(180),
-    data_foto DATE NOT NULL,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (arvore_id) REFERENCES arvores(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
 CREATE TABLE solicitacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     arvore_id INT NOT NULL,
@@ -68,25 +56,12 @@ CREATE TABLE solicitacoes (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-CREATE TABLE intervencoes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    arvore_id INT NOT NULL,
-    usuario_id INT NOT NULL,
-    tipo VARCHAR(100) NOT NULL,
-    responsavel VARCHAR(140) NOT NULL,
-    data_intervencao DATE NOT NULL,
-    custo_estimado DECIMAL(10,2) DEFAULT 0,
-    descricao TEXT,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (arvore_id) REFERENCES arvores(id) ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
 INSERT INTO usuarios (nome, email, senha, perfil, ativo) VALUES
 ('cesar', 'cesar123@gmail.com', '$2y$12$vI5P8SKAYzqcXHxrBZ5NMOnrECQ4B7mwh8vlYLRgqE38pUrYP/BzG', 'Administrador', 1),
 ('João Piastrelli', 'joaopiastrelli0908@gmail.com', '$2y$12$gQXupGATFUAi24t7VSs2quACkDJI.sVJ75WVs0aEBL2bGjijsYFbi', 'Administrador', 1),
 ('Renan Winkler', 'renanwinkler@gmail.com', '$2y$12$gQXupGATFUAi24t7VSs2quACkDJI.sVJ75WVs0aEBL2bGjijsYFbi', 'Técnico', 1),
 ('Angela Silva', 'angelavsilva@gmail.com', '$2y$12$gQXupGATFUAi24t7VSs2quACkDJI.sVJ75WVs0aEBL2bGjijsYFbi', 'Leitor', 1);
+
 UPDATE usuarios
 SET senha = '$2y$12$gQXupGATFUAi24t7VSs2quACkDJI.sVJ75WVs0aEBL2bGjijsYFbi', ativo = 1
 WHERE email IN (
@@ -116,20 +91,3 @@ INSERT INTO solicitacoes (arvore_id, usuario_id, solicitante, telefone, tipo, pr
 (3,3,'Equipe Técnica','(14) 3811-0000','Vistoria','Alta','Em análise','Avaliar impacto das raízes na calçada.'),
 (7,2,'João Lima','(14) 98888-2222','Poda','Média','Agendada','Poda preventiva antes do período de chuvas.'),
 (2,3,'Secretaria de Meio Ambiente','(14) 3811-1111','Manutenção','Baixa','Concluída','Inspeção visual e limpeza de entorno.');
-
-INSERT INTO intervencoes (arvore_id, usuario_id, tipo, responsavel, data_intervencao, custo_estimado, descricao) VALUES
-(2,3,'Poda preventiva','Equipe Verde','2026-04-15',180.00,'Poda leve para afastamento de fiação.'),
-(6,3,'Tratamento fitossanitário','Téc. Ana Souza','2026-04-28',95.50,'Aplicado tratamento preventivo.'),
-(1,3,'Vistoria técnica','Eng. Carlos Mendes','2026-05-03',0.00,'Árvore em excelente estado.'),
-(4,3,'Plantio de reforço','Equipe Verde','2026-05-10',120.00,'Adubação e tutoramento.');
-INSERT INTO fotos_arvores (arvore_id, caminho, legenda, data_foto)
-VALUES
-(1, 'arvore_1_1779762132.jpg', 'Foto periódica da árvore 1', CURDATE()),
-(1, 'arvore_1_1779762183.jpg', 'Foto periódica da árvore 1', CURDATE()),
-(2, 'arvore_2_1779762078.jpg', 'Foto periódica da árvore 2', CURDATE()),
-(2, 'arvore_2_1779762149.jpg', 'Foto periódica da árvore 2', CURDATE()),
-(3, 'arvore_3_1779762215.jpg', 'Foto periódica da árvore 3', CURDATE()),
-(3, 'arvore_3_1779762228.jpg', 'Foto periódica da árvore 3', CURDATE()),
-(4, 'arvore_4_1779762301.jpg', 'Foto periódica da árvore 4', CURDATE()),
-(5, 'arvore_5_1779762327.jpg', 'Foto periódica da árvore 5', CURDATE()),
-(7, 'arvore_7_1779762264.jpg', 'Foto periódica da árvore 7', CURDATE());

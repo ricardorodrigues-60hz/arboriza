@@ -1,0 +1,8 @@
+# Configurações locais com credenciais sensíveis
+config/config.local.php
+
+# Arquivos temporários do SO / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

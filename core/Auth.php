@@ -51,6 +51,9 @@ class Auth
             return false;
         }
 
+        // Regenera o ID da sessão para proteção contra session fixation (P0)
+        session_regenerate_id(true);
+
         $_SESSION['usuario'] = [
             'id' => $usuario['id'],
             'nome' => $usuario['nome'],

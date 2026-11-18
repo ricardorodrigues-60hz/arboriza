@@ -98,6 +98,27 @@ function requireAdmin(): void
     }
 }
 
+function badgeClassConservacao(?string $estado): string
+{
+    $e = function_exists('mb_strtolower')
+        ? mb_strtolower(trim((string)$estado), 'UTF-8')
+        : strtolower(trim((string)$estado));
+
+    switch ($e) {
+        case 'excelente':
+            return 'badge-conservacao-excelente';
+        case 'bom':
+            return 'badge-conservacao-bom';
+        case 'regular':
+            return 'badge-conservacao-regular';
+        case 'crítico':
+        case 'critico':
+            return 'badge-conservacao-critico';
+        default:
+            return 'badge-neutral';
+    }
+}
+
 function badgeClassPrioridade(?string $prioridade): string
 {
     $p = function_exists('mb_strtolower')
@@ -106,11 +127,14 @@ function badgeClassPrioridade(?string $prioridade): string
 
     switch ($p) {
         case 'urgente':
-            return 'badge-danger';
+            return 'badge-prioridade-urgente';
         case 'alta':
-            return 'badge-warning';
+            return 'badge-prioridade-alta';
+        case 'média':
+        case 'media':
+            return 'badge-prioridade-media';
         case 'baixa':
-            return 'badge-success';
+            return 'badge-prioridade-baixa';
         default:
             return 'badge-neutral';
     }
@@ -125,13 +149,16 @@ function badgeClassStatus(?string $status): string
     switch ($s) {
         case 'concluída':
         case 'concluida':
-            return 'badge-success';
+            return 'badge-status-concluida';
         case 'cancelada':
-            return 'badge-danger';
+            return 'badge-status-cancelada';
         case 'em análise':
         case 'em analise':
+            return 'badge-status-em-analise';
         case 'agendada':
-            return 'badge-warning';
+            return 'badge-status-agendada';
+        case 'aberta':
+            return 'badge-status-aberta';
         default:
             return 'badge-neutral';
     }
