@@ -27,6 +27,13 @@ $pageTitle = 'Entrar';
             <p>Inventário arbóreo municipal</p>
         </div>
 
+        <?php if ($msg = flash('success')): ?>
+            <div class="alert alert-success" role="alert">
+                <svg class="icon" width="16" height="16"><use href="#icon-check"></use></svg>
+                <span><?= e($msg) ?></span>
+            </div>
+        <?php endif; ?>
+
         <?php if ($msg = flash('error')): ?>
             <div class="alert alert-error" role="alert">
                 <svg class="icon" width="16" height="16"><use href="#icon-alert"></use></svg>
@@ -43,6 +50,11 @@ $pageTitle = 'Entrar';
             </label>
             <button class="btn" type="submit" style="width: 100%; justify-content: center; margin-top: 6px;">Entrar</button>
         </form>
+
+        <div style="margin-top: 18px; text-align: center; font-size: 13px;">
+            <span style="color: var(--color-text-secondary);">Não possui uma conta?</span>
+            <a href="cadastro.php" style="font-weight: 600; margin-left: 4px;">Cadastre-se</a>
+        </div>
     </div>
 </div>
 <?php include __DIR__ . '/partials/footer.php'; ?>
