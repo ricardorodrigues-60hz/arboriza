@@ -3,11 +3,10 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/core/helpers.php';
 require_once __DIR__ . '/config/database.php';
 
-if (isLoggedIn()) {
-    redirect('index.php');
-}
+requireAdmin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     $nome = trim(isset($_POST['nome']) ? $_POST['nome'] : '');
     $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
     $senha = isset($_POST['senha']) ? $_POST['senha'] : '';
@@ -35,10 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include __DIR__ . '/views/layout/header.php'; ?>
 <div class="card auth-card">
-    <div class="auth-logo">🌱</div>
-    <h1>Criar cadastro</h1>
-    <p>Crie um acesso para consultar o sistema de arborização urbana.</p>
+    <div class="auth-header">
+        <div class="brand-icon">
+            <svg class="icon" aria-hidden="true"><use href="<?= APP_URL ?>/assets/icons/sprite.svg#users"></use></svg>
+        </div>
+        <h1>Novo usuário</h1>
+    </div>
     <form method="post">
+        <?= csrf_field() ?>
         <label>Nome completo
             <input type="text" name="nome" required placeholder="Seu nome">
         </label>

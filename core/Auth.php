@@ -51,6 +51,8 @@ class Auth
             return false;
         }
 
+        session_regenerate_id(true);
+
         $_SESSION['usuario'] = [
             'id' => $usuario['id'],
             'nome' => $usuario['nome'],

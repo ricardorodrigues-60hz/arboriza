@@ -7,6 +7,37 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/**
+ * Retorna ou gera o token CSRF da sessão atual.
+ */
+function csrf_token(): string
+{
+    if (empty($_SESSION['_csrf'])) {
+        $_SESSION['_csrf'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['_csrf'];
+}
+
+/**
+ * Gera o campo hidden HTML com o token CSRF.
+ */
+function csrf_field(): string
+{
+    return '<input type="hidden" name="csrf_token" value="' . e(csrf_token()) . '">';
+}
+
+/**
+ * Valida o token CSRF enviado via POST e encerra com 403 se inválido.
+ */
+function csrf_check(): void
+{
+    $token = $_POST['csrf_token'] ?? '';
+    if (!is_string($token) || !hash_equals($_SESSION['_csrf'] ?? '', $token)) {
+        http_response_code(403);
+        die('Requisição inválida (CSRF).');
+    }
+}
+
 function e($value): string
 {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
@@ -98,6 +129,30 @@ function requireAdmin(): void
     }
 }
 
+/**
+ * Retorna a classe CSS semântica para o estado de conservação da árvore.
+ */
+function badgeClassEstado(?string $estado): string
+{
+    $e = function_exists('mb_strtolower')
+        ? mb_strtolower(trim((string)$estado), 'UTF-8')
+        : strtolower(trim((string)$estado));
+
+    switch ($e) {
+        case 'excelente':
+            return 'estado-excelente';
+        case 'bom':
+            return 'estado-bom';
+        case 'regular':
+            return 'estado-regular';
+        case 'crítico':
+        case 'critico':
+            return 'estado-critico';
+        default:
+            return 'badge-neutral';
+    }
+}
+
 function badgeClassPrioridade(?string $prioridade): string
 {
     $p = function_exists('mb_strtolower')
@@ -106,11 +161,14 @@ function badgeClassPrioridade(?string $prioridade): string
 
     switch ($p) {
         case 'urgente':
-            return 'badge-danger';
+            return 'prioridade-urgente';
         case 'alta':
-            return 'badge-warning';
+            return 'prioridade-alta';
+        case 'média':
+        case 'media':
+            return 'prioridade-media';
         case 'baixa':
-            return 'badge-success';
+            return 'prioridade-baixa';
         default:
             return 'badge-neutral';
     }

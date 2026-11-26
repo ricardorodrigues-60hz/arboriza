@@ -8,6 +8,7 @@ if (isLoggedIn()) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     if (Auth::login(isset($_POST['email']) ? $_POST['email'] : '', isset($_POST['senha']) ? $_POST['senha'] : '')) {
         redirect('index.php');
     }
@@ -16,18 +17,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include __DIR__ . '/views/layout/header.php'; ?>
 <div class="card auth-card">
-    <div class="auth-logo">🌳</div>
-    <h1>Arboriza Botucatu</h1>
-    <p>Entre para gerenciar árvores, solicitações, intervenções, gráficos e relatórios em PDF.</p>
+    <div class="auth-header">
+        <div class="brand-icon">
+            <svg class="icon" aria-hidden="true"><use href="<?= APP_URL ?>/assets/icons/sprite.svg#tree"></use></svg>
+        </div>
+        <h1>Arboriza Botucatu</h1>
+    </div>
     <form method="post">
+        <?= csrf_field() ?>
         <label>E-mail
             <input type="email" name="email" required placeholder="Digite seu e-mail">
         </label>
         <label>Senha
             <input type="password" name="senha" required placeholder="Digite sua senha">
         </label>
-        <button class="btn secondary auth-action" type="submit">Entrar no sistema</button>
-        <a class="btn secondary auth-action" href="<?= APP_URL ?>/cadastro.php">Criar novo cadastro</a>
+        <button class="btn auth-action" type="submit">Entrar</button>
     </form>
 </div>
 <?php include __DIR__ . '/views/layout/footer.php'; ?>
