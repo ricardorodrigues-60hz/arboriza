@@ -3,7 +3,10 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/core/helpers.php';
 require_once __DIR__ . '/config/database.php';
 
-requireAdmin();
+// Visitante pode se cadastrar; quem já está logado não precisa
+if (isLoggedIn()) {
+    redirect('index.php');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -40,6 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <h1>Novo usuário</h1>
     </div>
+    <p class="auth-note">
+        Sua conta será criada com perfil <strong>Leitor</strong>.
+        Após o cadastro, um administrador pode alterar suas permissões.
+    </p>
     <form method="post">
         <?= csrf_field() ?>
         <label>Nome completo

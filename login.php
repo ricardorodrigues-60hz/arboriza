@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" name="senha" required placeholder="Digite sua senha">
         </label>
         <button class="btn auth-action" type="submit">Entrar</button>
+        <a class="btn secondary auth-action" href="<?= APP_URL ?>/cadastro.php">Criar conta</a>
     </form>
 </div>
 <?php include __DIR__ . '/views/layout/footer.php'; ?>

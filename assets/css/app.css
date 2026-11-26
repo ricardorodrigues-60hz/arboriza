@@ -594,6 +594,16 @@ textarea {
   width: 100%;
 }
 
+.auth-note {
+  font-size: 13px;
+  color: var(--text-2);
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
 /* Charts & Reports */
 .chart-card {
   height: 320px;
