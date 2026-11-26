@@ -24,11 +24,6 @@ Sistema web para inventário arbóreo municipal e gestão de solicitações de m
 | Usuário | E-mail | Senha | Perfil |
 |---|---|---|---|
 | cesar | `cesar123@gmail.com` | `cesar123` | Administrador |
-| João Piastrelli | `joaopiastrelli0908@gmail.com` | `Fatec@2025` | Administrador |
-| Renan Winkler | `renanwinkler@gmail.com` | `Fatec@2025` | Técnico |
-| Angela Silva | `angelavsilva@gmail.com` | `Fatec@2025` | Leitor |
-
-> **Atenção:** troque as senhas antes de usar em qualquer ambiente além do desenvolvimento local.
 
 ## Instalação e uso
 
