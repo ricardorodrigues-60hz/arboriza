@@ -15,6 +15,7 @@ if (isset($_GET['edit'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     $acao = isset($_POST['acao']) ? $_POST['acao'] : 'criar';
 
     if ($acao === 'excluir') {
@@ -75,16 +76,11 @@ $usuarios = $db->query('SELECT id, nome, email, perfil, ativo, criado_em FROM us
 ?>
 <?php include __DIR__ . '/views/layout/header.php'; ?>
 
-<section class="hero">
-    <h2>Cadastros do sistema</h2>
-</section>
-
-<div class="grid grid-2" style="margin-top: 22px;">
+<div class="grid grid-2">
     <div class="card">
-        <div class="section-title" style="margin-top: 0;">
-            <h2><?= $edit ? 'Editar cadastro' : 'Novo cadastro' ?></h2>
-        </div>
+        <h2><?= $edit ? 'Editar usuário' : 'Novo usuário' ?></h2>
         <form method="post">
+            <?= csrf_field() ?>
             <input type="hidden" name="acao" value="<?= $edit ? 'editar' : 'criar' ?>">
             <input type="hidden" name="id" value="<?= e(isset($edit['id']) ? $edit['id'] : '') ?>">
             <label>Nome completo
@@ -115,10 +111,8 @@ $usuarios = $db->query('SELECT id, nome, email, perfil, ativo, criado_em FROM us
         </form>
     </div>
 
-    <div class="card">
-        <div class="section-title" style="margin-top: 0;">
-            <h2>Usuários cadastrados</h2>
-        </div>
+        <div class="card">
+        <h2>Usuários cadastrados</h2>
         <div class="table-wrap">
             <table>
                 <thead>
@@ -138,11 +132,12 @@ $usuarios = $db->query('SELECT id, nome, email, perfil, ativo, criado_em FROM us
                         <td><span class="badge"><?= e($u['perfil']) ?></span></td>
                         <td><?= $u['ativo'] ? '<span class="badge success">Ativo</span>' : '<span class="badge danger">Inativo</span>' ?></td>
                         <td>
-                            <a class="btn secondary" href="?edit=<?= (int)$u['id'] ?>" style="padding:8px 10px;">Editar</a>
-                            <form method="post" onsubmit="return confirm('Remover este cadastro?');" style="display:inline;">
+                            <a class="btn secondary btn-sm" href="?edit=<?= (int)$u['id'] ?>">Editar</a>
+                            <form method="post" onsubmit="return confirm('Remover este usuário?');" style="display:inline;">
+                                <?= csrf_field() ?>
                                 <input type="hidden" name="acao" value="excluir">
                                 <input type="hidden" name="id" value="<?= (int)$u['id'] ?>">
-                                <button class="btn danger" type="submit" style="padding:8px 10px;" <?= ((int)$u['id'] === (int)$_SESSION['usuario']['id']) ? 'disabled title="Não é possível excluir o usuário logado"' : '' ?>>Excluir</button>
+                                <button class="btn danger btn-sm" type="submit" <?= ((int)$u['id'] === (int)$_SESSION['usuario']['id']) ? 'disabled title="Não é possível excluir o usuário logado"' : '' ?>>Excluir</button>
                             </form>
                         </td>
                     </tr>

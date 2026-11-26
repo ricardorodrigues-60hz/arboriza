@@ -17,6 +17,7 @@ if (isset($_GET['delete'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     if (!canEditOperational()) {
         flash('error', 'Leitor não pode cadastrar fotos.');
         redirect('fotos.php');
@@ -50,10 +51,11 @@ $fotos = Foto::all();
 ?>
 <?php include __DIR__ . '/views/layout/header.php'; ?>
 <?php if (canEditOperational()): ?>
-<div class="grid grid-2">
-    <div class="card">
-        <h2>Nova foto periódica</h2>
-        <form method="post" enctype="multipart/form-data">
+<div class="card">
+    <h2>Nova foto periódica</h2>
+    <form method="post" enctype="multipart/form-data">
+        <?= csrf_field() ?>
+        <div class="form-grid">
             <label>Árvore
                 <select name="arvore_id" required>
                     <?php foreach($arvores as $a): ?>
@@ -62,16 +64,17 @@ $fotos = Foto::all();
                 </select>
             </label>
             <label>Data da foto<input type="date" name="data_foto" value="<?= date('Y-m-d') ?>" required></label>
-            <label>Imagem<input type="file" name="foto" accept="image/*" required></label>
-            <label>Legenda<textarea name="legenda" placeholder="Ex.: Foto após poda, crescimento da copa, condição das folhas..."></textarea></label>
-            <button class="btn">Registrar foto</button>
-        </form>
-    </div>
+        </div>
+        <label>Imagem<input type="file" name="foto" accept="image/*" required></label>
+        <label>Legenda<textarea name="legenda" placeholder="Ex.: Foto após poda, crescimento da copa, condição das folhas"></textarea></label>
+        <div><button class="btn" type="submit">Registrar foto</button></div>
+    </form>
 </div>
-<?php else: ?>
-<section class="hero"><h2>Consulta de fotos periódicas</h2><p>Seu perfil de Leitor permite visualizar as fotos registradas, mas não cadastrar novas imagens.</p></section>
 <?php endif; ?>
 <div class="section-title"><h2>Histórico de imagens</h2></div>
+<?php if (empty($fotos)): ?>
+    <div class="card"><p class="empty-state">Nenhuma foto registrada.</p></div>
+<?php else: ?>
 <div class="grid grid-3">
 <?php foreach($fotos as $f): ?>
     <div class="card">
@@ -84,13 +87,13 @@ if (strpos($caminhoFoto, 'uploads/') === 0) {
     $urlFoto = PUBLIC_UPLOAD_PATH . basename($caminhoFoto);
 }
 ?>
-
-<img src="<?= e($urlFoto) ?>" alt="Foto da árvore" style="width:100%;height:190px;object-fit:cover;border-radius:18px;margin-bottom:12px;">
+        <img class="photo-thumb" src="<?= e($urlFoto) ?>" alt="Foto da árvore <?= e($f['codigo']) ?>">
         <strong><?= e($f['codigo'].' - '.$f['especie']) ?></strong>
         <p><?= e($f['legenda']) ?></p>
-        <small>Data: <?= date('d/m/Y', strtotime($f['data_foto'])) ?></small><br><br>
-        <?php if (canEditOperational()): ?><a class="btn danger" data-confirm="Remover esta foto?" href="?delete=<?= e($f['id']) ?>">Excluir</a><?php endif; ?>
+        <small>Data: <?= date('d/m/Y', strtotime($f['data_foto'])) ?></small>
+        <?php if (canEditOperational()): ?><div style="margin-top:10px;"><a class="btn danger btn-sm" data-confirm="Remover esta foto?" href="?delete=<?= e($f['id']) ?>">Excluir</a></div><?php endif; ?>
     </div>
 <?php endforeach; ?>
 </div>
+<?php endif; ?>
 <?php include __DIR__ . '/views/layout/footer.php'; ?>

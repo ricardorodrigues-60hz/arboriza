@@ -23,6 +23,7 @@ if (isset($_GET['edit']) && !isAdmin()) {
 $edit = isset($_GET['edit']) ? Bairro::find((int)$_GET['edit']) : null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     if (!isAdmin()) {
         flash('error', 'Somente o administrador pode salvar bairros.');
         redirect('bairros.php');
@@ -39,12 +40,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $bairros = Bairro::all();
 ?>
 <?php include __DIR__ . '/views/layout/header.php'; ?>
-<section class="grid grid-2">
 <?php if (isAdmin()): ?>
-<div class="card"><h2><?= $edit ? 'Editar bairro' : 'Novo bairro' ?></h2><form method="post"><input type="hidden" name="id" value="<?= e(isset($edit['id']) ? $edit['id'] : '') ?>"><label>Nome<input name="nome" required value="<?= e(isset($edit['nome']) ? $edit['nome'] : '') ?>"></label><label>Zona<select name="zona"><?php foreach(array('Central','Norte','Sul','Leste','Oeste') as $zona): ?><option <?= (isset($edit['zona']) && $edit['zona']===$zona)?'selected':'' ?>><?= e($zona) ?></option><?php endforeach; ?></select></label><button class="btn"><?= $edit ? 'Atualizar bairro' : 'Salvar bairro' ?></button><?php if ($edit): ?><a class="btn secondary" href="bairros.php">Cancelar edição</a><?php endif; ?></form></div>
+<div class="card">
+    <h2><?= $edit ? 'Editar bairro' : 'Novo bairro' ?></h2>
+    <form method="post">
+        <?= csrf_field() ?>
+        <input type="hidden" name="id" value="<?= e(isset($edit['id']) ? $edit['id'] : '') ?>">
+        <div class="form-grid">
+            <label>Nome<input name="nome" required value="<?= e(isset($edit['nome']) ? $edit['nome'] : '') ?>"></label>
+            <label>Zona<select name="zona"><?php foreach(array('Central','Norte','Sul','Leste','Oeste') as $zona): ?><option <?= (isset($edit['zona']) && $edit['zona']===$zona)?'selected':'' ?>><?= e($zona) ?></option><?php endforeach; ?></select></label>
+        </div>
+        <div>
+            <button class="btn" type="submit"><?= $edit ? 'Atualizar bairro' : 'Salvar bairro' ?></button>
+            <?php if ($edit): ?><a class="btn secondary" href="bairros.php">Cancelar edição</a><?php endif; ?>
+        </div>
+    </form>
+</div>
 <?php endif; ?>
-<div class="card"><h2>Finalidade</h2><p>Os bairros organizam a estatística territorial, permitindo gerar gráficos e relatórios por região da cidade.</p></div>
-</section>
 <div class="section-title"><h2>Bairros cadastrados</h2></div>
-<div class="card table-wrap"><table><thead><tr><th>Nome</th><th>Zona</th><?php if (isAdmin()): ?><th>Ação</th><?php endif; ?></tr></thead><tbody><?php foreach($bairros as $b): ?><tr><td><?= e($b['nome']) ?></td><td><?= e($b['zona']) ?></td><?php if (isAdmin()): ?><td><a class="btn secondary" href="?edit=<?= e($b['id']) ?>">Editar</a> <a class="btn danger" data-confirm="Remover bairro?" href="?delete=<?= e($b['id']) ?>">Excluir</a></td><?php endif; ?></tr><?php endforeach; ?></tbody></table></div>
+<div class="card table-wrap">
+    <?php if (empty($bairros)): ?>
+        <p class="empty-state">Nenhum bairro cadastrado.</p>
+    <?php else: ?>
+    <table><thead><tr><th>Nome</th><th>Zona</th><?php if (isAdmin()): ?><th>Ação</th><?php endif; ?></tr></thead><tbody><?php foreach($bairros as $b): ?><tr><td><?= e($b['nome']) ?></td><td><?= e($b['zona']) ?></td><?php if (isAdmin()): ?><td><a class="btn secondary btn-sm" href="?edit=<?= e($b['id']) ?>">Editar</a> <a class="btn danger btn-sm" data-confirm="Remover bairro?" href="?delete=<?= e($b['id']) ?>">Excluir</a></td><?php endif; ?></tr><?php endforeach; ?></tbody></table>
+    <?php endif; ?>
+</div>
 <?php include __DIR__ . '/views/layout/footer.php'; ?>
