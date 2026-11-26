@@ -13,7 +13,7 @@ CREATE TABLE usuarios (
     nome VARCHAR(120) NOT NULL,
     email VARCHAR(160) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    perfil ENUM('Administrador','Técnico','Leitor') DEFAULT 'Administrador',
+    perfil ENUM('Administrador','Técnico','Leitor') DEFAULT 'Leitor',
     ativo TINYINT(1) DEFAULT 1,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
